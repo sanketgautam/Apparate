@@ -1,8 +1,8 @@
-from spider import Spider
+from scripts.spider import Spider
 import pickle
 from github import Github
 from datetime import datetime
-from config import logger
+from scripts.config import logger
 import click
 
 

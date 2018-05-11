@@ -4,3 +4,4 @@ __pycache__/
 env/
 geckodriver.log
 apparate.log
+apparate.egg-info 

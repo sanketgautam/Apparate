@@ -1,8 +1,7 @@
 import logging
 import re
 
-# Create and configure logger
-logging.basicConfig(filename="apparate.log",
+logging.basicConfig(filename="../apparate.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 

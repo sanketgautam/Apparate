@@ -1,5 +1,5 @@
 import time
-from config import *
+from scripts.config import *
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
