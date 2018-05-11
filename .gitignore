@@ -2,3 +2,4 @@ credentials.py
 .idea/
 __pycache__/
 env/
+geckodriver.log

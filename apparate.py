@@ -2,6 +2,7 @@ from spider import Spider
 import pickle
 from github import Github
 import base64
+from datetime import datetime
 from credentials import * #contains all the passwords & tokens
 
 file_path = "submissions.txt"
@@ -61,7 +62,7 @@ class Apparate:
         new_submissions = spider.submissions
 
         if len(new_submissions) is 0:
-            print("No new submissions found.")
+            #no new submissions found
             return None, None
 
         print("{} new submission(s) found.".format(len(new_submissions)))
@@ -138,7 +139,7 @@ class Apparate:
             file_extension = ".py"
 
         file = file_name + file_extension
-        file_path = file_directory + file_name
+        file_path = file_directory + file
 
         # verifying that GitHub Repo contains file at filepath
         try:
@@ -182,10 +183,25 @@ if __name__ == "__main__":
     # create_submission_files
     # create_commit for changes
     # push changes to github
+    #starting timer
+    startTime = datetime.now()
+    print(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
+
     apparate = Apparate()
     new_submissions, codes = apparate.check_updates()
-    apparate.update_repo(new_submissions, codes)
-    apparate.update_submissions(new_submissions)
+    if new_submissions is not None:
+        apparate.update_repo(new_submissions, codes)
+        apparate.update_submissions(new_submissions)
+    else:
+        print("No new submissions found!")
+        print("Nothing to update")
+
+    #end timer
+    diff = (datetime.now() - startTime).seconds
+    minutes = diff//60
+    seconds = diff - minutes*60
+
+    print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds ))
 
     '''print(new_submissions, codes)
     if new_submissions is None:
