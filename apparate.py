@@ -4,6 +4,7 @@ from github import Github
 import base64
 from datetime import datetime
 from credentials import * #contains all the passwords & tokens
+from config import logger
 
 file_path = "submissions.txt"
 
@@ -25,15 +26,19 @@ class Apparate:
 
         try:
             self.repo = user.get_repo(submissions_repo)
+            logger.info("Submissions Repo already exists")
             print("Submissions Repo already exists")
         except Exception as e:
             if e._GithubException__status == 404:
+                logger.info("Submissions Repo not Found")
                 print("Submissions Repo not Found")
                 self.repo = user.create_repo(name=submissions_repo, private=True, description="Collection of Solutions to various HackerRank Problems")
                 self.repo.create_file("/README.md", "initial commit", "# " + submissions_repo)
+                logger.info("Repo & README.md created successfully")
                 print("Repo & README.md created successfully")
             else:
-                print("exception : ", e)
+                logger.error("exception : ", e.with_traceback())
+                print("exception : ", e.with_traceback())
 
         #verifying that GitHub Repo contains submissions.txt
         try:
@@ -41,13 +46,16 @@ class Apparate:
             self.submissions = pickle.loads(c.decoded_content)
         except Exception as e:
             if e._GithubException__status == 404:
+                logger.info("submissions.txt doesn't exists")
                 print("submissions.txt doesn't exists")
                 c = self.repo.create_file("/submissions.txt", "created submissions.txt", pickle.dumps(self.submissions))
+                logger.info("file created successfully")
                 print("file created successfully")
             else:
+                logger.error("exception : ", e)
                 print("exception : ", e)
 
-        print("submissions", self.submissions)
+        logger.info("submissions size", len(self.submissions))
         print("submissions size", len(self.submissions))
 
     def check_updates(self):
@@ -58,12 +66,16 @@ class Apparate:
         else:
             last_saved = -1 #get all the submissions
         spider.fetch_new_submissions(last_saved)
+        spider.quit_driver()
 
         new_submissions = spider.submissions
 
         if len(new_submissions) is 0:
             #no new submissions found
             return None, None
+
+        logger.info("{} new submission(s) found.".format(len(new_submissions)))
+        logger.debug("Fetching code for new submissions...")
 
         print("{} new submission(s) found.".format(len(new_submissions)))
         print("Fetching code for new submissions...")
@@ -83,9 +95,11 @@ class Apparate:
         #code:
         # --------------------------------------------------------
         files = []
+        logger.debug("Generating files for {} submission(s)...".format(len(submissions)))
         print("Generating files for {} submission(s)...".format(len(submissions)))
         i = 1
         for submission in submissions:
+            logger.info(" - generating file for submission {} ".format(i))
             print(" - generating file for submission {} ".format(i))
             content = "-----------------------------------------------------------------------\n"
             content += "\nProblem Title: " + submission[0]
@@ -146,23 +160,27 @@ class Apparate:
             message = "updated " + file_name
             c = self.repo.get_file_contents(file_path)
             if c.decoded_content != content:
-                print("  -- updating existing file")
                 self.repo.update_file(file_path, message, content, c.sha)
+                logger.info("  -- updated existing file")
+                print("  -- updated existing file")
         except Exception as e:
             if e._GithubException__status == 404:
                 message = "added " + file_name
-                print("  -- creating new file")
                 self.repo.create_file(file_path, message, content)
-                print("  -- file created successfully")
+                logger.info("  -- created new file")
+                print("  -- created new file")
             else:
+                logger.error("exception : ", e)
                 print("exception : ", e)
         return file
 
     def update_repo(self, submissions, codes):
         files = []
+        logger.debug("Updating repo for {} new submission(s)...".format(len(submissions)))
         print("Updating repo for {} new submission(s)...".format(len(submissions)))
         i = 1
         for submission in submissions:
+            logger.info(" - updating repo with submission {}".format(i))
             print(" - updating repo with submission {}".format(i))
             file = self.create_commit(submission, codes[submission])
             files.append(file)
@@ -173,8 +191,10 @@ class Apparate:
             c = self.repo.get_file_contents("/submissions.txt")
             self.repo.update_file("/submissions.txt", "updated submissions.txt", pickle.dumps(submissions +
                                                                                               self.submissions), c.sha)
+            logger.info("submissions.txt updated successfully")
             print("submissions.txt updated successfully")
         except Exception as e:
+            logger.error("exception : ", e.with_traceback())
             print("exception : ", e.with_traceback())
 
 if __name__ == "__main__":
@@ -185,6 +205,7 @@ if __name__ == "__main__":
     # push changes to github
     #starting timer
     startTime = datetime.now()
+    logger.debug(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
     print(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
 
     apparate = Apparate()
@@ -193,6 +214,9 @@ if __name__ == "__main__":
         apparate.update_repo(new_submissions, codes)
         apparate.update_submissions(new_submissions)
     else:
+        logger.info("No new submissions found!")
+        logger.info("Nothing to update")
+
         print("No new submissions found!")
         print("Nothing to update")
 
@@ -201,7 +225,8 @@ if __name__ == "__main__":
     minutes = diff//60
     seconds = diff - minutes*60
 
-    print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds ))
+    logger.debug("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
+    print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
 
     '''print(new_submissions, codes)
     if new_submissions is None:

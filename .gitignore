@@ -3,3 +3,4 @@ credentials.py
 __pycache__/
 env/
 geckodriver.log
+apparate.log

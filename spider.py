@@ -1,5 +1,6 @@
 import re
 import time
+from config import logger
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
@@ -56,9 +57,11 @@ class Spider:
                     "href"))[-1])
 
         except Exception as e:
-            print(e)
+            logger.error(e.with_traceback())
+            print(e.with_traceback())
             self.start, self.end = 0, 0
 
+        logger.info("pagination params, {} - {}".format(self.start, self.end))
         print(self.start, self.end)
 
 
@@ -82,7 +85,8 @@ class Spider:
             self.submissions.append((title, language, problem, result, link))
 
         except Exception as e:
-            print(e)
+            logger.error(e.with_traceback())
+            print(e.with_traceback())
             return -1
         return self.submissions[0]
 
@@ -119,6 +123,7 @@ class Spider:
         codes = {}
         i = 1
         for submission in submissions:
+            logger.info(" - fetching code for submission {}".format(i))
             print(" - fetching code for submission {}".format(i))
             code = ""
             link = submission[4]
@@ -145,6 +150,9 @@ class Spider:
             pretty_code = self.driver.find_element_by_name("code").text
 
         return pretty_code
+
+    def quit_driver(self):
+        self.driver.quit()
 
 if __name__ == "__main__":
     spider = Spider()
