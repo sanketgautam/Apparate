@@ -1,7 +1,6 @@
 from spider import Spider
 import pickle
 from github import Github
-import base64
 from datetime import datetime
 from credentials import *  # contains all the passwords & tokens
 from config import logger
