@@ -2,6 +2,7 @@ import time
 from config import *
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
+from selenium.webdriver.firefox.options import Options
 
 
 class Spider:
@@ -12,7 +13,12 @@ class Spider:
         self.submissions = []
         self.start, self.end = 0, 0
 
-        self.driver = webdriver.Firefox()
+        options = Options()
+        options.headless = True
+
+        self.driver = webdriver.Firefox(firefox_options=options)
+        logger.info("Headless Firefox Initialized")
+        print("Headless Firefox Initialized")
         self.driver.maximize_window()
 
         # logging into HackerRank account
