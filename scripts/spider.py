@@ -34,6 +34,19 @@ class Spider:
         # Find the submit button using class name and click on it.
         login.find_element_by_name("commit").click()
 
+        # verifying that login was successful
+        time.sleep(5)
+
+        try:
+            error = login.find_element_by_class_name("alert")
+            if error.text == "Invalid login or password. Please try again.":
+                logger.info("Unable to login to HackerRank, please verify username or password")
+                print("Unable to login to HackerRank, please verify username / password or try again later")
+                exit(1)
+        except Exception:
+            logger.info("HackerRank Login Successful")
+            print("HackerRank Login Successful")
+
     def fetch_pagination_params(self):
 
         # visit submissions page
@@ -53,8 +66,8 @@ class Spider:
                     "href"))[-1])
 
         except Exception as e:
-            logger.error(e.with_traceback())
-            print(e.with_traceback())
+            logger.error(e)
+            print(e)
             self.start, self.end = 0, 0
 
         logger.info("pagination params, {} - {}".format(self.start, self.end))

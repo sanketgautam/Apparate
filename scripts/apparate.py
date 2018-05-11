@@ -2,8 +2,8 @@ from spider import Spider
 import pickle
 from github import Github
 from datetime import datetime
-from credentials import *  # contains all the passwords & tokens
 from config import logger
+import click
 
 
 class Apparate:
@@ -12,10 +12,22 @@ class Apparate:
         self.submissions = []
         self.repo = None
 
-        # Verifying that Submissions GitHub Repo exists
-        g = Github(github_token)
-        user = g.get_user()
+        # verifying GitHub authentication token
+        try:
+            g = Github(github_token)
+            user = g.get_user()
+            repos = user.get_key(1) # dummy request to test authorization
+            print(type(repos))
+            print(dir(repos))
+        except Exception as e:
+            if e._GithubException__status == 401: #unauthorized
+                print("Unable to authenticate to GitHub, please verify token")
+                logger.info("Unable to authenticate to GitHub, please verify token or try again later")
+                exit(1)
+        print("GitHub Authentication Successful")
+        logger.info("GitHub Authentication Successful")
 
+        # verifying that Submissions GitHub Repo exists
         try:
             self.repo = user.get_repo(submissions_repo)
             logger.info("Submissions Repo already exists")
@@ -30,8 +42,8 @@ class Apparate:
                 logger.info("Repo & README.md created successfully")
                 print("Repo & README.md created successfully")
             else:
-                logger.error("exception : ", e.with_traceback())
-                print("exception : ", e.with_traceback())
+                logger.error("Exception : ", e)
+                print("Exception : ", e)
 
         # verifying that GitHub Repo contains submissions.txt
         try:
@@ -45,8 +57,8 @@ class Apparate:
                 logger.info("file created successfully")
                 print("file created successfully")
             else:
-                logger.error("exception : ", e)
-                print("exception : ", e)
+                logger.error("Exception : ", e)
+                print("Exception : ", e)
 
         logger.info("submissions size {}".format(len(self.submissions)))
         print("submissions size", len(self.submissions))
@@ -129,8 +141,8 @@ class Apparate:
                 logger.info("  -- created new file")
                 print("  -- created new file")
             else:
-                logger.error("exception : ", e)
-                print("exception : ", e)
+                logger.error("Exception : ", e)
+                print("Exception : ", e)
         return file
 
     def update_repo(self, submissions, codes):
@@ -153,11 +165,22 @@ class Apparate:
             logger.info("submissions.txt updated successfully")
             print("submissions.txt updated successfully")
         except Exception as e:
-            logger.error("exception : ", e.with_traceback())
-            print("exception : ", e.with_traceback())
+            logger.error("Exception : ", e)
+            print("Exception : ", e)
 
 
-if __name__ == "__main__":
+@click.command()
+@click.option("--repo", prompt=True, help="Name of GitHub repository to store submissions")
+@click.option("--user", prompt=True, help="Username of your HackerRank account")
+@click.option("--passwd", prompt=True, hide_input=True,  help="Login Password of you HackerRank account")
+@click.option("--token", prompt=True, help="GitHub Access Token with all repository privileges")
+def apparate(repo, user, passwd, token):
+
+    global submissions_repo, hackerrank_username, hackerrank_password, github_token
+    submissions_repo = repo
+    hackerrank_username = user
+    hackerrank_password = passwd
+    github_token = token
 
     startTime = datetime.now()
     logger.debug(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
@@ -181,8 +204,8 @@ if __name__ == "__main__":
     except Exception as e:
 
         logger.error("[FATAL Error] Unable to Apparate")
-        logger.error(e.with_traceback())
-        print("[FATAL Error] Unable to Apparate", e.with_traceback())
+        logger.error(e)
+        print("[FATAL Error] Unable to Apparate", e)
         exit(1)  # exit indicating some issue/error/problem
 
     finally:
@@ -194,3 +217,8 @@ if __name__ == "__main__":
 
         logger.debug("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
         print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
+
+
+if __name__ == "__main__":
+
+    apparate()
