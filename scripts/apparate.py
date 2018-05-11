@@ -16,11 +16,11 @@ class Apparate:
         try:
             g = Github(github_token)
             user = g.get_user()
-            repos = user.get_key(1) # dummy request to test authorization
+            repos = user.get_key(1)  # dummy request to test authorization
             print(type(repos))
             print(dir(repos))
         except Exception as e:
-            if e._GithubException__status == 401: #unauthorized
+            if e._GithubException__status == 401:  # unauthorized
                 print("Unable to authenticate to GitHub, please verify token")
                 logger.info("Unable to authenticate to GitHub, please verify token or try again later")
                 exit(1)
@@ -172,10 +172,9 @@ class Apparate:
 @click.command()
 @click.option("--repo", prompt=True, help="Name of GitHub repository to store submissions")
 @click.option("--user", prompt=True, help="Username of your HackerRank account")
-@click.option("--passwd", prompt=True, hide_input=True,  help="Login Password of you HackerRank account")
+@click.option("--passwd", prompt=True, hide_input=True, help="Login Password of you HackerRank account")
 @click.option("--token", prompt=True, help="GitHub Access Token with all repository privileges")
 def apparate(repo, user, passwd, token):
-
     global submissions_repo, hackerrank_username, hackerrank_password, github_token
     submissions_repo = repo
     hackerrank_username = user
@@ -220,5 +219,4 @@ def apparate(repo, user, passwd, token):
 
 
 if __name__ == "__main__":
-
     apparate()
