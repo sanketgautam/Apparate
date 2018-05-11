@@ -3,16 +3,9 @@ import pickle
 from github import Github
 import base64
 from datetime import datetime
-from credentials import * #contains all the passwords & tokens
+from credentials import *  # contains all the passwords & tokens
 from config import logger
 
-file_path = "submissions.txt"
-
-def stringToBase64(s):
-    return base64.b64encode(s.encode('utf-8'))
-
-def base64ToString(b):
-    return base64.b64decode(b).decode('utf-8')
 
 class Apparate:
 
@@ -32,7 +25,8 @@ class Apparate:
             if e._GithubException__status == 404:
                 logger.info("Submissions Repo not Found")
                 print("Submissions Repo not Found")
-                self.repo = user.create_repo(name=submissions_repo, private=True, description="Collection of Solutions to various HackerRank Problems")
+                self.repo = user.create_repo(name=submissions_repo, private=True,
+                                             description="Collection of Solutions to various HackerRank Problems")
                 self.repo.create_file("/README.md", "initial commit", "# " + submissions_repo)
                 logger.info("Repo & README.md created successfully")
                 print("Repo & README.md created successfully")
@@ -40,7 +34,7 @@ class Apparate:
                 logger.error("exception : ", e.with_traceback())
                 print("exception : ", e.with_traceback())
 
-        #verifying that GitHub Repo contains submissions.txt
+        # verifying that GitHub Repo contains submissions.txt
         try:
             c = self.repo.get_contents("submissions.txt")
             self.submissions = pickle.loads(c.decoded_content)
@@ -55,23 +49,24 @@ class Apparate:
                 logger.error("exception : ", e)
                 print("exception : ", e)
 
-        logger.info("submissions size", len(self.submissions))
+        logger.info("submissions size {}".format(len(self.submissions)))
         print("submissions size", len(self.submissions))
 
     def check_updates(self):
 
         spider = Spider(hackerrank_username, hackerrank_password)
         if len(self.submissions) > 0:
-            last_saved = self.submissions[0][4] #get all submissions after last_saved
+            last_saved = self.submissions[0][4]  # get all submissions after last_saved
         else:
-            last_saved = -1 #get all the submissions
+            last_saved = -1  # get all the submissions
         spider.fetch_new_submissions(last_saved)
-        spider.quit_driver()
 
         new_submissions = spider.submissions
 
         if len(new_submissions) is 0:
-            #no new submissions found
+            # quit browser
+            spider.quit_driver()
+            # no new submissions found
             return None, None
 
         logger.info("{} new submission(s) found.".format(len(new_submissions)))
@@ -81,64 +76,23 @@ class Apparate:
         print("Fetching code for new submissions...")
         codes = spider.fetch_code_for_submissions(new_submissions)
 
+        # quit browser
+        spider.quit_driver()
+
         return new_submissions, codes
 
-    def create_submission_files(self, submissions, codes):
-        # Deprecated: This method will not be used further
-        #it'll iterate through and create individual files for each submission containing metadata and code
-        #metadata parameters
-        # -------------------------------------------------------
-        #problem title: submission[0] > title
-        #problem link: submission[2] > problem
-        #author: hackerrank_username
-        #language: submission[1] > language
-        #code:
-        # --------------------------------------------------------
-        files = []
-        logger.debug("Generating files for {} submission(s)...".format(len(submissions)))
-        print("Generating files for {} submission(s)...".format(len(submissions)))
-        i = 1
-        for submission in submissions:
-            logger.info(" - generating file for submission {} ".format(i))
-            print(" - generating file for submission {} ".format(i))
-            content = "-----------------------------------------------------------------------\n"
-            content += "\nProblem Title: " + submission[0]
-            content += "\nProblem Link: " + submission[2]
-            content += "\nAuthor: " + hackerrank_username
-            content += "\nLanguage : " + submission[1]
-            content += "\n\n---------------------------------------------------------------------\n\n"
-            content += "\n"+codes[submission]
-            language = submission[1]
-            file_directory = "submissions/"
-            file_name = submission[0]
-            file_extension = ""
-
-            if "c++" in language.lower():
-                file_extension = ".cpp"
-            elif "java" in language.lower():
-                file_extension = ".java"
-            elif "python" in language.lower():
-                file_extension = ".py"
-
-            file = file_name + file_extension
-            f = open(file_directory + file, 'w')
-            f.write(content)
-            f.close()
-            files.append(file)
-            i += 1
-
     def create_commit(self, submission, code):
-        #it'll create a commit for newly added files
+        # it'll create a commit for added or updated file
         title = submission[0]
         language = submission[1]
         link = submission[2]
 
-        content = "-----------------------------------------------------------------------\n"
+        content = "/*-----------------------------------------------------------------------\n"
         content += "\nProblem Title: " + title
         content += "\nProblem Link: " + link
         content += "\nAuthor: " + hackerrank_username
         content += "\nLanguage : " + language
-        content += "\n\n---------------------------------------------------------------------\n\n"
+        content += "\n\n-----------------------------------------------------------------------*/\n\n"
         content += "\n" + code
 
         file_directory = "/submissions/"
@@ -155,7 +109,7 @@ class Apparate:
         file = file_name + file_extension
         file_path = file_directory + file
 
-        # verifying that GitHub Repo contains file at filepath
+        # verifying that GitHub Repo contains file at file_path
         try:
             message = "updated " + file_name
             c = self.repo.get_file_contents(file_path)
@@ -197,65 +151,41 @@ class Apparate:
             logger.error("exception : ", e.with_traceback())
             print("exception : ", e.with_traceback())
 
+
 if __name__ == "__main__":
-    # if check_updates == None
-    #   return
-    # create_submission_files
-    # create_commit for changes
-    # push changes to github
-    #starting timer
+
     startTime = datetime.now()
     logger.debug(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
     print(startTime.strftime("Executing Apparate on %a, %d %b %Y, %H:%M:%S"))
 
-    apparate = Apparate()
-    new_submissions, codes = apparate.check_updates()
-    if new_submissions is not None:
-        apparate.update_repo(new_submissions, codes)
-        apparate.update_submissions(new_submissions)
-    else:
-        logger.info("No new submissions found!")
-        logger.info("Nothing to update")
+    try:
+        apparate = Apparate()
 
-        print("No new submissions found!")
-        print("Nothing to update")
+        new_submissions, codes = apparate.check_updates()
 
-    #end timer
-    diff = (datetime.now() - startTime).seconds
-    minutes = diff//60
-    seconds = diff - minutes*60
+        if new_submissions is not None:
+            apparate.update_repo(new_submissions, codes)
+            apparate.update_submissions(new_submissions)
+        else:
+            logger.info("No new submissions found!")
+            logger.info("Nothing to update")
 
-    logger.debug("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
-    print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
+            print("No new submissions found!")
+            print("Nothing to update")
 
-    '''print(new_submissions, codes)
-    if new_submissions is None:
-        print("No new updates")
-        exit(0)
+    except Exception as e:
 
-    #creating new submissions files with metadata
-    new_files = apparate.create_submission_files(new_submissions, codes)
+        logger.error("[FATAL Error] Unable to Apparate")
+        logger.error(e.with_traceback())
+        print("[FATAL Error] Unable to Apparate", e.with_traceback())
+        exit(1)  # exit indicating some issue/error/problem
 
-    print("new_files", new_files)
-    #updating the submissions record
-    apparate.update_submissions(new_submissions)
+    finally:
 
-    #commit these files in the local repo
-    #loop through the new_files
+        # end timer
+        diff = (datetime.now() - startTime).seconds
+        minutes = diff // 60
+        seconds = diff - minutes * 60
 
-    #for each file, if it doesn't exists
-        #put/ create file in the repo with message "added submission ****"
-    #if it exists, already
-        #get the base64, remove new lines and decode it
-        #compare with the new base64 encoded code
-        #if there is a match
-            #pass
-        #else
-            #update the existing file with message "updated submission ****"
-
-    commit_message = "added "
-    for file in new_files:
-        commit_message +=file+", "
-    commit_message = commit_message[:-2]
-    '''
-    # push these files in GitHUb repo
+        logger.debug("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))
+        print("Time taken to Apparate is {} min(s), {} sec(s)".format(minutes, seconds))

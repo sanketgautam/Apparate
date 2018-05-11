@@ -1,31 +1,21 @@
-import re
 import time
-from config import logger
+from config import *
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import Select
-from selenium.webdriver.common.action_chains import ActionChains
 
-login_page_url = "https://www.hackerrank.com/login"
-all_submissions_page_url = "https://www.hackerrank.com/submissions/all"
-submissions_page_i_url = "https://www.hackerrank.com/submissions/all/page/"
-
-cpp_formatter_url = "http://format.krzaq.cc/"
-
-p = re.compile("[0-9]+$")
 
 class Spider:
 
     def __init__(self, username, password):
 
-        #initializing variables
+        # initializing variables
         self.submissions = []
         self.start, self.end = 0, 0
 
         self.driver = webdriver.Firefox()
         self.driver.maximize_window()
 
-        #logging into hackerrank account
+        # logging into HackerRank account
         self.driver.get(login_page_url)
         login = self.driver.find_element_by_id("login")
 
@@ -38,17 +28,17 @@ class Spider:
         # Find the submit button using class name and click on it.
         login.find_element_by_name("commit").click()
 
-
     def fetch_pagination_params(self):
 
-        # visit subimssions page
+        # visit submissions page
         self.driver.get(all_submissions_page_url)
 
         try:
             # getting the start and end for pagination
             pagination = self.driver.find_element_by_class_name("pagination").find_element_by_tag_name("ul")
 
-            # skipping first two elements as they are previous and first buttton, which are disabled on first/current page
+            # skipping first two elements as they are previous(<) and first(<<) buttton,
+            # which are disabled on current (all submissions) page
             self.start = int(str(
                 pagination.find_element_by_css_selector("li:nth-child(3)").find_element_by_tag_name("a").get_attribute(
                     "href"))[-1])
@@ -62,34 +52,7 @@ class Spider:
             self.start, self.end = 0, 0
 
         logger.info("pagination params, {} - {}".format(self.start, self.end))
-        print(self.start, self.end)
-
-
-    def fetch_latest_submission(self):
-        # Deprecated: no to be used without making changes
-        # TODO: consider only accepted submissions
-        self.driver.get(submissions_page_i_url + str(1))
-        self.submissions = []
-
-        try:
-            list = self.driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name("submissions_item")
-
-            row = list[0]
-
-            title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("text")
-            language = row.find_element_by_class_name("submissions-language").find_element_by_tag_name("p").text
-            problem = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("href")
-            result = row.find_element_by_class_name("span3").find_element_by_tag_name("p").text
-            link = row.find_element_by_class_name("view-results").get_attribute("href")
-
-            self.submissions.append((title, language, problem, result, link))
-
-        except Exception as e:
-            logger.error(e.with_traceback())
-            print(e.with_traceback())
-            return -1
-        return self.submissions[0]
-
+        print("pagination params, {} - {}".format(self.start, self.end))
 
     def fetch_new_submissions(self, last_saved):
         self.fetch_pagination_params()
@@ -98,25 +61,28 @@ class Spider:
         if self.start is 0 or self.end is 0:
             return
 
-        for i in range(self.start, self.end+1):
+        for i in range(self.start, self.end + 1):
             self.driver.get(submissions_page_i_url + str(i))
-            list = self.driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name("submissions_item")
+            rows = self.driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name(
+                "submissions_item")
 
-            for row in list:
-                title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("text")
+            for row in rows:
+                title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name(
+                    "a").get_attribute("text")
                 language = row.find_element_by_class_name("submissions-language").find_element_by_tag_name("p").text
-                problem = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("href")
+                problem = row.find_element_by_class_name("submissions-title").find_element_by_tag_name(
+                    "a").get_attribute("href")
                 result = row.find_element_by_class_name("span3").find_element_by_tag_name("p").text
                 link = row.find_element_by_class_name("view-results").get_attribute("href")
 
-                #current = int(p.findall(link)[0])
+                # current = int(p.findall(link)[0])
                 if link == last_saved:
                     return
-                #consider only accepted submissions
+
+                # consider only accepted submissions
                 if result != "Accepted":
                     continue
                 self.submissions.append((title, language, problem, result, link))
-
 
     def fetch_code_for_submissions(self, submissions):
 
@@ -130,7 +96,7 @@ class Spider:
             self.driver.get(link)
             lines = self.driver.find_elements_by_css_selector("span[role=presentation]")
             for line in lines:
-                    code += (line.text+"\n")
+                code += (line.text + "\n")
             codes[submission] = self.prettify_code(submission[1], code)
             i += 1
         return codes
@@ -154,85 +120,13 @@ class Spider:
     def quit_driver(self):
         self.driver.quit()
 
+
 if __name__ == "__main__":
     spider = Spider()
-    #latest_submission = spider.fetch_latest_submission()
-    #print("latest_submission : ", latest_submission)
-    #print("submissions length", len(spider.submissions))
-    #print("submissions : ", spider.submissions)
-    #print("-------------------------------------------------------------")
-    spider.fetch_new_submissions(0)
-    print("submissions length", len(spider.submissions))
-    print("submissions : ", spider.submissions)
+    spider.fetch_new_submissions(0)  # 0 to fetch all accepted submissions
+    print("new submissions : ", spider.submissions)
+    print("new submissions length", len(spider.submissions))
     print("--------------------------------------------------------------")
+    print("Fetching source codes for new submissions")
     codes = spider.fetch_code_for_submissions(spider.submissions)
     print(codes)
-    #print(pretty_code)
-
-if __name__ == "__maan__":
-
-    driver.get(login_page_url)
-    login  = driver.find_element_by_id("login")
-
-    uname = login.find_element_by_name("login")
-    uname.send_keys(username)
-
-    passw = login.find_element_by_name("password")
-    passw.send_keys(password)
-
-    # Find the submit button using class name and click on it.
-    login.find_element_by_name("commit").click()
-
-    #visit subimssions page
-    driver.get(all_submissions_page_url)
-
-    #getting the start and end for pagination
-    pagination = driver.find_element_by_class_name("pagination").find_element_by_tag_name("ul")
-
-    #skipping first two elements as they are previous and first buttton, which are disabled on first/current page
-    start = int(str(pagination.find_element_by_css_selector("li:nth-child(3)").find_element_by_tag_name("a").get_attribute("href"))[-1])
-    end = int(str(pagination.find_element_by_css_selector("li:last-child").find_element_by_tag_name("a").get_attribute("href"))[-1])
-
-    print(start, end)
-
-
-    for i in range(start, end+1):
-        driver.get(submissions_page_i_url+str(i))
-        list = driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name("submissions_item")
-
-        for row in list:
-            title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("text")
-            language = row.find_element_by_class_name("submissions-language").find_element_by_tag_name("p").text
-            problem = row.find_element_by_class_name("submissions-title").find_element_by_tag_name("a").get_attribute("href")
-            result = row.find_element_by_class_name("span3").find_element_by_tag_name("p").text
-            link = row.find_element_by_class_name("view-results").get_attribute("href")
-            print(title, language, problem, result, link)
-
-            submissions.append((title, language, problem, result, link))
-
-    print(submissions)
-
-    #wait for 5 secs
-    #time.sleep(5)
-    #driver.quit()
-
-    '''
-        Spider Class:
-            - fetchLatestSubmission()
-            - fetchNewSubmissions(last_saved) #pass -1 to fetch all submissions
-            - fetchCodeForSubmissions(submissions)
-             
-        Decisions: 
-         - The submissions[] array is stored in a text file named submissions.txt 
-        
-        Algorithm:
-        - The initial value of last_saved is "-1".
-        - Every time we run the script, do:
-             - we find new submissions which are submitted after last_saved (top of submissions.txt)
-             - if len(submissions) = 0
-                    do nothing & exit
-             - iterate over all new submissions and fetch the code for all new_submissions[] 
-             - create files with code & metadata for each new submission
-             - create new commit and push to GitHub
-             - update the value of submissions[] array & last_saved with the top of submissions[]
-    '''
