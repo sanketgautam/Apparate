@@ -86,14 +86,6 @@ class Apparate:
         language = submission[1]
         link = submission[2]
 
-        content = "/*-----------------------------------------------------------------------\n"
-        content += "\nProblem Title: " + title
-        content += "\nProblem Link: " + link
-        content += "\nAuthor: " + hackerrank_username
-        content += "\nLanguage : " + language
-        content += "\n\n-----------------------------------------------------------------------*/\n\n"
-        content += "\n" + code
-
         file_directory = "/submissions/"
         file_name = title
         file_extension = ""
@@ -104,6 +96,20 @@ class Apparate:
             file_extension = ".java"
         elif "python" in language.lower():
             file_extension = ".py"
+
+        if file_extension != ".py":
+            content = "/*-----------------------------------------------------------------------\n"
+        else:
+            content = "'''-----------------------------------------------------------------------\n"
+        content += "\nProblem Title: " + title
+        content += "\nProblem Link: " + link
+        content += "\nAuthor: " + hackerrank_username
+        content += "\nLanguage : " + language
+        if file_extension != ".py":
+            content += "\n\n-----------------------------------------------------------------------*/\n\n"
+        else:
+            content += "\n\n-----------------------------------------------------------------------'''\n\n"
+        content += "\n" + code
 
         file = file_name + file_extension
         file_path = file_directory + file
