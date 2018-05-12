@@ -1,7 +1,15 @@
 import logging
 import re
+import os.path
 
-logging.basicConfig(filename="apparate.log",
+home = os.path.expanduser("~")
+dir_path = os.path.join(home, '.logs')
+print(dir_path)
+
+if not os.path.exists(dir_path):
+    os.makedirs(dir_path)
+
+logging.basicConfig(filename=dir_path + "/apparate.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
