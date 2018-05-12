@@ -1,7 +1,7 @@
 import logging
 import re
 
-logging.basicConfig(filename="../apparate.log",
+logging.basicConfig(filename="apparate.log",
                     format='%(asctime)s %(message)s',
                     filemode='w')
 
