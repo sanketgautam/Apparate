@@ -4,7 +4,6 @@ import os.path
 
 home = os.path.expanduser("~")
 dir_path = os.path.join(home, '.logs')
-print(dir_path)
 
 if not os.path.exists(dir_path):
     os.makedirs(dir_path)
