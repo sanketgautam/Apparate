@@ -99,13 +99,13 @@ Follow these instructions to install firefox [install Firefox 59 to avoid any co
 
 3. Move the Firefox folder to opt & remove the Older version of Firefox if it's there
 
-        sudo rm -rf /opt/firefox58 (only if older version, firefox58 is already installed)
+        sudo rm -rf /opt/firefox58 (only if firefox58 is already installed)
 
         sudo mv firefox /opt/firefox59
 
 4. Create the symbolic link for new Firefox
 
-        sudo mv /usr/bin/firefox /usr/bin/firefoxold (only if any older version firefox is already installed)
+        sudo mv /usr/bin/firefox /usr/bin/firefoxold (only if any other version of firefox is already installed)
 
         sudo ln -s /opt/firefox59/firefox-bin /usr/bin/firefox
     
