@@ -4,7 +4,6 @@ from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
 
-
 class Spider:
 
     def __init__(self, username, password):
@@ -16,7 +15,7 @@ class Spider:
         options = Options()
         options.headless = True
 
-        self.driver = webdriver.Firefox(firefox_options=options)
+        self.driver = webdriver.Firefox(firefox_options=options, log_path="/tmp/geckodriver.log")
         logger.info("Headless Firefox Initialized")
         print("Headless Firefox Initialized")
         self.driver.maximize_window()
