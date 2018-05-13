@@ -36,7 +36,7 @@ class Apparate:
             if e._GithubException__status == 404:
                 logger.info("Submissions Repo not Found")
                 print("Submissions Repo not Found")
-                self.repo = user.create_repo(name=submissions_repo, private=True,
+                self.repo = user.create_repo(name=submissions_repo, private=False,
                                              description="Collection of Solutions to various HackerRank Problems")
                 self.repo.create_file("/README.md", "initial commit", "# " + submissions_repo)
                 logger.info("Repo & README.md created successfully")
