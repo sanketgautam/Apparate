@@ -111,7 +111,7 @@ class Spider:
         i = 1
         for submission in submissions:
             logger.info(" - fetching code for submission {}".format(i))
-            print(" - fetching code for submission {}".format(i))
+            print(" - fetching code for submission {}. {}".format(i, submission[0]))
             code = ""
             link = submission[4]
             self.driver.get(link)

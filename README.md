@@ -79,6 +79,8 @@ Find the latest version of the driver for your platform (32 bit/ 64 bit) and dow
 4. Add the driver to your PATH so selenium can find it:
      add `export PATH=$PATH:/path-to-extracted-file/geckodriver` to your `~/.profile` and then execute `source ~/.profile` 
 
+Test it by re-opening terminal & executing `geckodriver` from another directory. If that doesn't works, try using `source ~/.bashrc` in step 4 instead of `source ~/.profile`.
+
 ## Install Firefox Browser
 
 Follow these instructions to install firefox [install Firefox 59 to avoid any compatibility issues]
@@ -124,18 +126,18 @@ Verify installation by running `firefox --version`, if it throws any errors, the
 
 1. Clone or Download Apparate Repository
     
-        `git clone https://github.com/sanketgautam/Apparate.git`
+        git clone https://github.com/sanketgautam/Apparate.git
 
 2. Now install `Apparate`  by executing following command inside Apparate/ directory 
 
-         `pip3 install --editable .` (installing setup.py)
+         pip3 install --editable . (installing setup.py)
  
 
 ## Validate and Test Installation
 
 To verify the installation, execute
     
-        `apparate --help`
+        apparate --help
 
 it should give the following output,
 ```

@@ -152,7 +152,7 @@ class Apparate:
         i = 1
         for submission in submissions:
             logger.info(" - updating repo with submission {}".format(i))
-            print(" - updating repo with submission {}".format(i))
+            print(" - updating repo with submission {}. {}".format(i, submission[0]))
             file = self.create_commit(submission, codes[submission])
             files.append(file)
             i += 1
@@ -175,6 +175,7 @@ class Apparate:
 @click.option("--passwd", prompt=True, hide_input=True, help="Login Password of you HackerRank account")
 @click.option("--token", prompt=True, help="GitHub Access Token with all repository privileges")
 def apparate(repo, user, passwd, token):
+    """ Tool to Synchronize HackerRank Submissions with GitHub """
     global submissions_repo, hackerrank_username, hackerrank_password, github_token
     submissions_repo = repo
     hackerrank_username = user
