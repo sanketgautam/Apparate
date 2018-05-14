@@ -1,5 +1,5 @@
 # Apparate
-Apparate is a command line tool to synchronize your HackerRank Submissions to your GitHub Repository.
+Apparate is a command line tool to synchronize your HackerRank Accepted Submissions to your GitHub Repository.
 Just write `apparate` on terminal, give it your credentials, sit-back and relax, it'll take care of the rest. 
 
 You can also schedule a cron job to run apparate regularly & keep your submissions up to date.
@@ -35,7 +35,7 @@ Steps:
 
  - Scheduling cron Job to update regularly
     
-    - [Change to your Local Timezone](#change-to-your-local-timezone)
+    - [Change to your Local Timezone](#change-to-your-local-timezone) (required for remote deployment, ex- AWS EC2 Instance)
     - [Schedule Cron Job](#schedule-cron-job)
 
 # Contributions
@@ -157,8 +157,8 @@ Run and Test Apparate as follows.
     apparate --repo <Submissions_Repo_Name> --user <HackerRank_Username> --passwd <HackerRank_Password> --token <GitHub_Token> 
 
 ## Change to your Local Timezone
-Before scheduling apparate with crontab, verify if your machine is using correct timezone, if not,
-then change timezone of your machine to your local timezone. 
+Most of the cloud virtual machine instances (ex- AWS EC2) use `UTC` by default. Before scheduling apparate with crontab, verify if your machine is using correct timezone, if not,
+then change timezone of your machine to your local timezone.
 
 For that, may use `timedatectl` as,
 
@@ -168,8 +168,14 @@ For that, may use `timedatectl` as,
 
 For example, to set machine timezone to `Asia/Kolkata`, you may run,
             
-            `sudo timedatectl set-timezone Asia/Kolkata`
-    
+            sudo timedatectl set-timezone Asia/Kolkata
+**Note:** To get cron to launch programs according to local time, I had to change `/etc/localtime` to be a symbolic link to the appropriate `tzfile` for my timezone, and then restart the cron service:
+
+    mv /etc/localtime /etc/localtime.bak
+    ln -s /usr/share/zoneinfo/Asia/Kolkata /etc/localtime
+    service cron restart
+
+
 ## Schedule Cron Job
 
 To schedule a cron job, you can write cron expressions.To learn more about cron jobs & scheduling follow this nice article by DigitalOcean - [How To Use Cron To Automate Tasks On a VPS](https://www.digitalocean.com/community/tutorials/how-to-use-cron-to-automate-tasks-on-a-vps)
