@@ -57,15 +57,18 @@ class Spider:
 
             # skipping first two elements as they are previous(<) and first(<<) buttton,
             # which are disabled on current (all submissions) page
-            self.start = int(str(
+            start = str(
                 pagination.find_element_by_css_selector("li:nth-child(3)").find_element_by_tag_name("a").get_attribute(
-                    "href"))[-1])
-            self.end = int(str(
+                    "href"))
+            end = str(
                 pagination.find_element_by_css_selector("li:last-child").find_element_by_tag_name("a").get_attribute(
-                    "href"))[-1])
+                    "href"))
 
+            #fetching start and end numbers from url
+            self.start = int(re.search(p, start).group(0))
+            self.end  = int(re.search(p, end).group(0))
         except Exception as e:
-            logger.error(e)
+            logger.exception(e)
             print(e)
             self.start, self.end = 0, 0
 

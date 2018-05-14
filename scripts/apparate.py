@@ -42,7 +42,7 @@ class Apparate:
                 logger.info("Repo & README.md created successfully")
                 print("Repo & README.md created successfully")
             else:
-                logger.error("Exception : ", e)
+                logger.exception(e)
                 print("Exception : ", e)
 
         # verifying that GitHub Repo contains submissions.txt
@@ -57,7 +57,7 @@ class Apparate:
                 logger.info("file created successfully")
                 print("file created successfully")
             else:
-                logger.error("Exception : ", e)
+                logger.exception(e)
                 print("Exception : ", e)
 
         logger.info("submissions size {}".format(len(self.submissions)))
@@ -141,7 +141,7 @@ class Apparate:
                 logger.info("  -- created new file")
                 print("  -- created new file")
             else:
-                logger.error("Exception : ", e)
+                logger.exception(e)
                 print("Exception : ", e)
         return file
 
@@ -165,7 +165,7 @@ class Apparate:
             logger.info("submissions.txt updated successfully")
             print("submissions.txt updated successfully")
         except Exception as e:
-            logger.error("Exception : ", e)
+            logger.exception(e)
             print("Exception : ", e)
 
 
@@ -203,7 +203,7 @@ def apparate(repo, user, passwd, token):
     except Exception as e:
 
         logger.error("[FATAL Error] Unable to Apparate")
-        logger.error(e)
+        logger.exception(e)
         print("[FATAL Error] Unable to Apparate", e)
         exit(1)  # exit indicating some issue/error/problem
 
