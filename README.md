@@ -79,7 +79,7 @@ Find the latest version of the driver for your platform (32 bit/ 64 bit) and dow
 4. Add the driver to your PATH so selenium can find it:
      add `export PATH=$PATH:/path-to-extracted-file/geckodriver` to your `~/.profile` and then execute `source ~/.profile` 
 
-Test it by re-opening terminal & executing `geckodriver` from another directory. If that doesn't works, try using `source ~/.bashrc` in step 4 instead of `source ~/.profile`.
+Test it by re-opening terminal & executing `geckodriver` from another directory. If that doesn't works, perform step 4 again with `~/.bashrc` file instead of `~/.profile`.
 
 ## Install Firefox Browser
 
