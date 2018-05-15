@@ -9,7 +9,7 @@ Usage: apparate [OPTIONS]
 Options:
   --repo TEXT    Name of GitHub repository to store submissions
   --user TEXT    Username of your HackerRank account
-  --passwd TEXT  Login Password of you HackerRank account
+  --passwd TEXT  Login Password of your HackerRank account
   --token TEXT   GitHub Access Token with all repository privileges
   --help         Show this message and exit.
 
