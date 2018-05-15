@@ -50,7 +50,7 @@ class Spider:
 
         # visit submissions page
         self.driver.get(all_submissions_page_url)
-
+        time.sleep(5)
         try:
             # getting the start and end for pagination
             pagination = self.driver.find_element_by_class_name("pagination").find_element_by_tag_name("ul")
@@ -84,6 +84,7 @@ class Spider:
 
         for i in range(self.start, self.end + 1):
             self.driver.get(submissions_page_i_url + str(i))
+            time.sleep(2)
             rows = self.driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name(
                 "submissions_item")
 
