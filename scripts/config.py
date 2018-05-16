@@ -12,7 +12,7 @@ if not os.path.exists(dir_path):
 
 logging.basicConfig(filename=dir_path + "/apparate.log",
                     format='%(asctime)s %(message)s',
-                    filemode='w')
+                    filemode='a')
 
 logger = logging.getLogger()
 
