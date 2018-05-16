@@ -2,6 +2,8 @@ import logging
 import re
 import os.path
 
+MAX_WAIT = 10
+
 home = os.path.expanduser("~")
 dir_path = os.path.join(home, '.logs')
 

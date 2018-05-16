@@ -3,6 +3,11 @@ from scripts.config import *
 from selenium import webdriver
 from selenium.webdriver.support.ui import Select
 from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+from selenium.common.exceptions import TimeoutException
+
 
 class Spider:
 
@@ -34,15 +39,17 @@ class Spider:
         login.find_element_by_name("commit").click()
 
         # verifying that login was successful
-        time.sleep(5)
 
         try:
-            error = login.find_element_by_class_name("alert")
-            if error.text == "Invalid login or password. Please try again.":
+            error_text = "Invalid login or password. Please try again."
+            error = WebDriverWait(login, 5).until(
+                EC.text_to_be_present_in_element((By.CLASS_NAME, "error"), error_text))
+            if error:
                 logger.info("Unable to login to HackerRank, please verify username or password")
-                print("Unable to login to HackerRank, please verify username / password or try again later")
+                print("Unable to login to HackerRank, please verify username/password or try again later")
+                self.quit_driver()
                 exit(1)
-        except Exception:
+        except TimeoutException:
             logger.info("HackerRank Login Successful")
             print("HackerRank Login Successful")
 
@@ -50,10 +57,11 @@ class Spider:
 
         # visit submissions page
         self.driver.get(all_submissions_page_url)
-        time.sleep(5)
+
         try:
             # getting the start and end for pagination
-            pagination = self.driver.find_element_by_class_name("pagination").find_element_by_tag_name("ul")
+            pagination = WebDriverWait(self.driver, MAX_WAIT).until(
+                EC.presence_of_element_located((By.CLASS_NAME, "pagination")))
 
             # skipping first two elements as they are previous(<) and first(<<) buttton,
             # which are disabled on current (all submissions) page
@@ -64,9 +72,9 @@ class Spider:
                 pagination.find_element_by_css_selector("li:last-child").find_element_by_tag_name("a").get_attribute(
                     "href"))
 
-            #fetching start and end numbers from url
+            # fetching start and end numbers from url
             self.start = int(re.search(p, start).group(0))
-            self.end  = int(re.search(p, end).group(0))
+            self.end = int(re.search(p, end).group(0))
         except Exception as e:
             logger.exception(e)
             print(e)
@@ -84,9 +92,8 @@ class Spider:
 
         for i in range(self.start, self.end + 1):
             self.driver.get(submissions_page_i_url + str(i))
-            time.sleep(2)
-            rows = self.driver.find_element_by_class_name("submissions-list-wrapper").find_elements_by_class_name(
-                "submissions_item")
+            rows = WebDriverWait(self.driver, MAX_WAIT).until(
+                EC.presence_of_all_elements_located((By.CLASS_NAME, "submissions_item")))
 
             for row in rows:
                 title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name(
@@ -97,7 +104,6 @@ class Spider:
                 result = row.find_element_by_class_name("span3").find_element_by_tag_name("p").text
                 link = row.find_element_by_class_name("view-results").get_attribute("href")
 
-                # current = int(p.findall(link)[0])
                 if link == last_saved:
                     return
 
@@ -134,8 +140,12 @@ class Spider:
             select = Select(self.driver.find_element_by_id('styleSelect'))
             select.select_by_visible_text('WebKit')
             self.driver.find_element_by_id("submitButton").click()
-            time.sleep(2)
-            pretty_code = self.driver.find_element_by_name("code").text
+            try:
+                pretty_code = WebDriverWait(self.driver, MAX_WAIT).until(
+                    EC.presence_of_element_located((By.NAME, "code"))).text
+            except Exception as e:
+                logger.exception(e)
+                print("Unable for format code, using unformatted code")
 
         return pretty_code
 
