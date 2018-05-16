@@ -95,6 +95,11 @@ class Spider:
             rows = WebDriverWait(self.driver, MAX_WAIT).until(
                 EC.presence_of_all_elements_located((By.CLASS_NAME, "submissions_item")))
 
+            # handing partially loaded submissions lists
+            if ((i is not self.end) and (len(rows)<10)) or i is self.end:
+                time.sleep(2)
+                rows = self.driver.find_elements_by_class_name("submissions_item")
+
             for row in rows:
                 title = row.find_element_by_class_name("submissions-title").find_element_by_tag_name(
                     "a").get_attribute("text")
