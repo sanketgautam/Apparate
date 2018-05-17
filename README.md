@@ -83,21 +83,17 @@ Test it by re-opening terminal & executing `geckodriver` from another directory.
 
 ## Install Firefox Browser
 
-Follow these instructions to install firefox [install Firefox 59 to avoid any compatibility issues]
+Follow these instructions to install firefox [install Firefox 59.0.2 to avoid any compatibility issues]
 
-1. Download The Latest Version of Firefox 59 from their FTP using wget
-
-    - For 32 bit systems
-
-        wget https://ftp.mozilla.org/pub/firefox/releases/59.0/linux-i686/en-US/firefox-59.0.tar.bz2
+1. Download Firefox v59.0.2 from their FTP using wget, example
 
     - For 64 bit systems
 
-        wget https://ftp.mozilla.org/pub/firefox/releases/59.0/linux-x86_64/en-US/firefox-59.0.tar.bz2
+        wget https://ftp.mozilla.org/pub/firefox/releases/59.0.2/linux-x86_64/en-US/firefox-59.0.2.tar.bz2
 
 2. Extract the tar package
 
-        tar -xjf firefox-59.0.tar.bz2
+        tar -xjf firefox-59.0.2.tar.bz2
 
 3. Move the Firefox folder to opt & remove the Older version of Firefox if it's there
 
