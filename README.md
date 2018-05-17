@@ -22,7 +22,7 @@ Here are the instructions to install apparate on Ubuntu 16.04 LTS. Other platfor
 
 Steps: 
  - Environment Setup  
-    - [Install python-dev and OpenSSL](#install-python-dev-and-openssl)
+    - [Update and Upgrade your OS](#update-and-upgrade-your-os)
     - [Install Firefox Geckodriver](#install-firefox-geckodriver)
     - [Install Firefox Browser](#install-firefox-browser)
     - [Install Python3 and Pip3](#install-python3-and-pip3)
@@ -43,22 +43,11 @@ Steps:
 Contributions are welcome to apparate to add support for more platforms (ex- Codefchef, Codeforces etc.), improve existing code, 
 update documentation or add new features. To start contributing fork this repository, make changes and send a pull request with your changes. 
  
-## Install python-dev and OpenSSL
+## Update and Upgrade your OS
 
-First of all update & upgrade your system,
+To update and upgrade your system, run the following command,
 
 ```sudo apt update && sudo apt upgrade```
-
-Then install python-dev. It includes header files, a static library and development tools for building Python modules, extending the Python interpreter or embedding Python in applications.
-
-```sudo apt-get install python-dev```
-
-Install OpenSSL development package, It's implementation of the SSL and TLS cryptographic protocols for secure  communication over the Internet. It contains development libraries, header files, and manpages for libssl and libcrypto. 
-    
- ```sudo apt-get install libssl-dev```
- 
-Also, install fake monitor in ubuntu for required for proper working of firefox & selenium,
- ```apt-get install xvfb```
 
 ## Install Firefox Geckodriver 
  
@@ -85,27 +74,25 @@ Test it by re-opening terminal & executing `geckodriver` from another directory.
 
 Follow these instructions to install firefox [install Firefox 59.0.2 to avoid any compatibility issues]
 
-1. Download Firefox v59.0.2 from their FTP using wget, example
+1. Download Firefox v59.0.2 from their [FTP using wget](https://ftp.mozilla.org/pub/firefox/releases/), example, for 64 bit systems
 
-    - For 64 bit systems
-
-        wget https://ftp.mozilla.org/pub/firefox/releases/59.0.2/linux-x86_64/en-US/firefox-59.0.2.tar.bz2
+       wget https://ftp.mozilla.org/pub/firefox/releases/59.0.2/linux-x86_64/en-US/firefox-59.0.2.tar.bz2
 
 2. Extract the tar package
 
-        tar -xjf firefox-59.0.2.tar.bz2
+       tar -xjf firefox-59.0.2.tar.bz2
 
 3. Move the Firefox folder to opt & remove the Older version of Firefox if it's there
 
-        sudo rm -rf /opt/firefox58 (only if firefox58 is already installed)
+       sudo rm -rf /opt/firefox58 (only if firefox58 is already installed)
 
-        sudo mv firefox /opt/firefox59
+       sudo mv firefox /opt/firefox59
 
 4. Create the symbolic link for new Firefox
 
-        sudo mv /usr/bin/firefox /usr/bin/firefoxold (only if any other version of firefox is already installed)
+       sudo mv /usr/bin/firefox /usr/bin/firefoxold (only if any other version of firefox is already installed)
 
-        sudo ln -s /opt/firefox59/firefox-bin /usr/bin/firefox
+       sudo ln -s /opt/firefox59/firefox-bin /usr/bin/firefox
     
 Verify installation by running `firefox --version`, if it throws any errors, then also install these required dependencies,
 
