@@ -47,7 +47,7 @@ update documentation or add new features. To start contributing fork this reposi
 
 To update and upgrade your system, run the following command,
 
-```sudo apt update && sudo apt upgrade```
+                                   sudo apt update && sudo apt upgrade
 
 ## Install Firefox Geckodriver 
  
@@ -55,15 +55,15 @@ Firefox geckodriver required for selenium,
 1. Go to the [geckodriver releases page](https://github.com/mozilla/geckodriver/releases). 
 Find the latest version of the driver for your platform (32 bit/ 64 bit) and download it. For example:
 
-        wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
+       wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
 
 2. Extract the file with:
 
-        tar -xvzf geckodriver*
+       tar -xvzf geckodriver*
 
 3. Make it executable:
 
-        chmod +x geckodriver
+       chmod +x geckodriver
 
 4. Add the driver to your PATH so selenium can find it:
      add `export PATH=$PATH:/path-to-extracted-file/geckodriver` to your `~/.profile` and then execute `source ~/.profile` 
@@ -74,7 +74,7 @@ Test it by re-opening terminal & executing `geckodriver` from another directory.
 
 Follow these instructions to install firefox [install Firefox 59.0.2 to avoid any compatibility issues]
 
-1. Download Firefox v59.0.2 from their [FTP using wget](https://ftp.mozilla.org/pub/firefox/releases/), example, for 64 bit systems
+1. Download Firefox v59.0.2 from [Mozilla FTP](https://ftp.mozilla.org/pub/firefox/releases/) using `wget`, example, for 64 bit systems
 
        wget https://ftp.mozilla.org/pub/firefox/releases/59.0.2/linux-x86_64/en-US/firefox-59.0.2.tar.bz2
 
