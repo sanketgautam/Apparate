@@ -5,7 +5,7 @@ beautifulsoup4==4.6.0
 cffi==1.11.5
 click==6.7
 constantly==15.1.0
-cryptography==2.2.2
+cryptography>=2.3
 cssselect==1.0.3
 gitdb2==2.0.3
 GitPython==2.1.9
@@ -27,6 +27,6 @@ selenium==3.12.0
 service-identity==17.0.0
 six==1.11.0
 smmap2==2.0.3
-Twisted==18.4.0
+Twisted>=20.3.0
 w3lib==1.19.0
 zope.interface==4.5.0
