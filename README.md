@@ -1,4 +1,4 @@
-<img src="https://hrcdn.net/hackerrank/assets/brand/h_mark_sm-30dc0e0cbd2dded63b294819ff853a90.svg" width="100" height="100"><img src="https://assets-cdn.github.com/images/modules/logos_page/GitHub-Mark.png" width="100" height="100">
+<img src="https://hrcdn.net/hackerrank/assets/brand/h_mark_sm-30dc0e0cbd2dded63b294819ff853a90.svg" width="100" height="100"><img src="GitHub-Mark-120px-plus.png" width="100" height="100">
 
 # Apparate
 Apparate is a command line tool to synchronize your HackerRank Accepted Submissions to your GitHub Repository.
