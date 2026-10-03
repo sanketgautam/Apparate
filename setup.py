@@ -7,7 +7,7 @@ setup(
     include_package_data=True,
     install_requires=[
         "click==6.7",
-        "PyGithub==1.39",
+        "PyGithub>=2.5,<3",
         "selenium==3.12.0"
     ],
     entry_points='''

@@ -1,6 +1,6 @@
 from scripts.spider import Spider
 import pickle
-from github import Github
+from github import Auth, Github
 from datetime import datetime
 from scripts.config import logger
 import click
@@ -14,7 +14,7 @@ class Apparate:
 
         # verifying GitHub authentication token
         try:
-            g = Github(github_token)
+            g = Github(auth=Auth.Token(github_token))
             user = g.get_user()
             repos = user.get_key(1)  # dummy request to test authorization
             print(type(repos))
@@ -74,7 +74,7 @@ class Apparate:
 
         new_submissions = spider.submissions
 
-        if len(new_submissions) is 0:
+        if len(new_submissions) == 0:
             # quit browser
             spider.quit_driver()
             # no new submissions found
