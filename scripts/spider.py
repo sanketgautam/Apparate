@@ -87,7 +87,7 @@ class Spider:
         self.fetch_pagination_params()
         self.submissions = []
 
-        if self.start is 0 or self.end is 0:
+        if self.start == 0 or self.end == 0:
             return
 
         for i in range(self.start, self.end + 1):
